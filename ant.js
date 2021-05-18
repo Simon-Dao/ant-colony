@@ -10,7 +10,7 @@ class Ant {
         this.v = createVector(0,0)
         this.foodRange = 100
         this.foodCarry = 0.5
-        this.foodIndex = -1
+        this.foodSightRange = 150
     }
 
     update() {
@@ -63,30 +63,42 @@ class Ant {
     }
       
     moveToFood() {
-      let foodInRange = this.getFoodInRange()
-      if(foodInRange.length == 0) return
-
-      let closest = foodInRange[0].l
-      let closestDist = p5.Vector.dist(closest, this.l)
-
-      for(let i = 0; i < foodInRange; i++) {
-
-        let currentDist = p5.Vector.dist(foodInRange[i].l, this.l)
-
-        if(closestDist > currentDist) {
-          closest = foodInRange[i].l
-          closestDist = currentDist
-          foodIndex = i
-        } 
-      }
+    
+      let closest = this.getClosestFood()
 
       let newVector = p5.Vector.sub(closest, this.l)
 
       this.v.add(newVector)
     }
 
+    getClosestFood() {
+      let foodInRange = this.getFoodInRange()
+      if(foodInRange.length == 0) return
+
+      let closest = food[0]
+      let closestDist = p5.Vector.dist(closest.l, this.l)
+
+      for(let i = 0; i < foodInRange; i++) {
+
+        let currentDist = p5.Vector.dist(foodInRange[i].l, this.l)
+
+        if(closestDist > currentDist) {
+          closest = foodInRange[i]
+          closestDist = currentDist
+          foodIndex = i
+        } 
+      }
+      return closest.l
+    }
     getFoodInRange() {
-      return food.filter(f => p5.Vector.dist(this.l, f.l))
+
+      let inRange = []
+
+      for(let i = 0; i<food.length; i++) {
+        if(p5.Vector.dist(this.l,food[i].l) <= this.foodSightRange)
+          inRange.push(food[i])
+      }
+      return inRange
     }
 
     generateUnitCoords() {
