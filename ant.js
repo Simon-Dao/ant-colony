@@ -1,6 +1,10 @@
+let SEARCHING = 1
+let EATING = 2
+let RETURNING = 3
+
 class Ant {
 
-    constructor(x,y,direction) {
+    constructor(x,y) {
         this.l = createVector(x,y)
         this.seed = random(0,360)
         this.rand = createVector(0,0)
@@ -11,19 +15,44 @@ class Ant {
         this.foodRange = 100
         this.foodCarry = 0.5
         this.foodSightRange = 150
+        this.movementMode = SEARCHING
+        this.closest = null
+        this.stomachFull = false
     }
 
     update() {
-        
-        this.v = createVector(0,0)
-        this.moveRandomly()
-        this.moveToFood()
-        //this.moveToMouse()
+        switch(this.movementMode) {
+          case SEARCHING:
+            this.searchMode()
+            break
+          case EATING:
+            this.eatingMode()
+            break
+          case RETURNING:
+            this.returningMode()
+        }
+
         this.v.limit(3)
         this.l.add(this.v)
         this.enforceBounds()
 
         ellipse(this.l.x,this.l.y,5,5)
+    }
+
+    searchMode() {
+      this.v = createVector(0,0)
+      this.moveRandomly()
+      
+      if(this.moveToFood())
+        this.movementMode = EATING
+    }
+
+    eatingMode() {
+      
+    }
+
+    returningMode() {
+
     }
 
     moveRandomly() {
@@ -69,11 +98,13 @@ class Ant {
       if(!closest) return
 
       stroke(255,255,255)
-      line(this.l.x,this.l.y,closest.x,closest.y)
+      line(this.l.x,this.l.y,closest.l.x,closest.l.y)
 
-      let newVector = p5.Vector.sub(closest, this.l)
+      let newVector = p5.Vector.sub(closest.l, this.l)
 
       this.v.add(newVector)
+
+      return p5.Vector.dist(closest.l, this.l) < closest.value
     }
 
     getClosestFood() {
@@ -93,7 +124,7 @@ class Ant {
           foodIndex = i
         } 
       }
-      return closest.l
+      return closest
     }
     getFoodInRange() {
 

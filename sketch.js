@@ -1,6 +1,6 @@
 let ants = []
 let food = []
-let NUM_OF_ANTS = 10
+let NUM_OF_ANTS = 50
 let pos
 
 function setup() {
@@ -9,7 +9,7 @@ function setup() {
   frameRate(60)
 
   for(let i = 0; i<NUM_OF_ANTS; i++) {
-    ants.push(new Ant(400,400, random(0,360)))
+    ants.push(new Ant(400,400))
   }
 
   rectMode(CENTER)
@@ -22,6 +22,8 @@ function draw() {
   ants.forEach(ant => {ant.update()})
 
   food.forEach(f => {f.update()})
+
+  food = food.filter(f => f.value > 0)
 }
 
 function mouseClicked() {
