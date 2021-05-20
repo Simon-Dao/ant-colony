@@ -65,6 +65,8 @@ class Ant {
     moveToFood() {
     
       let closest = this.getClosestFood()
+      
+      if(!closest) return
 
       let newVector = p5.Vector.sub(closest, this.l)
 
