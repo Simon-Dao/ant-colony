@@ -68,6 +68,9 @@ class Ant {
       
       if(!closest) return
 
+      stroke(255,255,255)
+      line(this.l.x,this.l.y,closest.x,closest.y)
+
       let newVector = p5.Vector.sub(closest, this.l)
 
       this.v.add(newVector)
@@ -77,7 +80,7 @@ class Ant {
       let foodInRange = this.getFoodInRange()
       if(foodInRange.length == 0) return
 
-      let closest = food[0]
+      let closest = foodInRange[0]
       let closestDist = p5.Vector.dist(closest.l, this.l)
 
       for(let i = 0; i < foodInRange; i++) {

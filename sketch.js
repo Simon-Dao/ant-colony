@@ -1,6 +1,6 @@
 let ants = []
 let food = []
-let NUM_OF_ANTS = 50
+let NUM_OF_ANTS = 10
 let pos
 
 function setup() {
