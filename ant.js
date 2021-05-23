@@ -17,7 +17,10 @@ class Ant {
         this.foodSightRange = 150
         this.movementMode = SEARCHING
         this.closest = null
-        this.stomachFull = false
+        this.foodInStomach = 0
+        this.startTime = 0
+        this.endTime = 0
+        this.timerSet = 0
     }
 
     update() {
@@ -35,29 +38,67 @@ class Ant {
         this.v.limit(3)
         this.l.add(this.v)
         this.enforceBounds()
-
+        
+        stroke(255,255,255)
+        fill(255,255,255)
         ellipse(this.l.x,this.l.y,5,5)
     }
 
     searchMode() {
       this.v = createVector(0,0)
-      this.moveRandomly()
+      this.moveRandomly(.01)
       
-      if(this.moveToFood())
+      if(this.moveToFood()) {
         this.movementMode = EATING
+      }
     }
 
     eatingMode() {
+
+      if(!this.timerSet) {
+        this.timerSet = true
+        this.startCounting()
+      }
+      else 
+      if(this.elapsedSeconds() >= 2) {
+        this.timerSet = false
+        this.movementMode = RETURNING
+      } else {
+        this.v.setMag(0)
+      }
       
     }
 
+    elapsedSeconds() {
+      this.endTime = new Date()
+      let diff = this.endTime - this.startTime
+      diff /= 1000
+
+      return Math.floor(diff) + 1
+    }
+
     returningMode() {
+      if(!this.timerSet) {
+        this.timerSet = true
+      }
+      else
+      if(this.elapsedSeconds() >= 6) {
+        this.movementMode = SEARCHING
+        this.timerSet = false
+      } else {
+        let newVector = p5.Vector.sub(createVector(nest.x,nest.y),this.l)
+        newVector.limit(2)
+  
+        this.v.add(newVector)
+        this.moveRandomly(2)
+      }
+
 
     }
 
-    moveRandomly() {
+    moveRandomly(strength) {
       if(frameCount % Math.floor(random(10,15)) == 0) {
-        this.rand = this.generateRandomVector()
+        this.rand = this.generateRandomVector(strength)
         this.rand.sub(this.l)
         this.rand.limit(2)
       }
@@ -71,15 +112,15 @@ class Ant {
       this.v.add(mouseVector)
     }
 
-    generateRandomVector() {
-        let coords = this.generateUnitCoords()
+    generateRandomVector(strength) {
+        let coords = this.generateUnitCoords(strength)
       
         let x = coords.x
         let y = coords.y
 
         let c = 0
         while(!this.withinBoundries(x,y) && c < 2000) {
-            let coords = this.generateUnitCoords()
+            let coords = this.generateUnitCoords(strength)
             let x = coords.x
             let y = coords.y
             c++
@@ -97,14 +138,12 @@ class Ant {
       
       if(!closest) return
 
-      stroke(255,255,255)
-      line(this.l.x,this.l.y,closest.l.x,closest.l.y)
-
       let newVector = p5.Vector.sub(closest.l, this.l)
 
+      newVector.limit(2.5)
       this.v.add(newVector)
 
-      return p5.Vector.dist(closest.l, this.l) < closest.value
+      return p5.Vector.dist(closest.l, this.l) < closest.value/2
     }
 
     getClosestFood() {
@@ -126,19 +165,9 @@ class Ant {
       }
       return closest
     }
-    getFoodInRange() {
 
-      let inRange = []
-
-      for(let i = 0; i<food.length; i++) {
-        if(p5.Vector.dist(this.l,food[i].l) <= this.foodSightRange)
-          inRange.push(food[i])
-      }
-      return inRange
-    }
-
-    generateUnitCoords() {
-      this.seed += .02
+    generateUnitCoords(strength) {
+      this.seed += strength
       let randAngle = noise(this.seed) * 100 
       let randomMag = random(0,10)
   
@@ -152,6 +181,18 @@ class Ant {
           y: y
       }
     }
+
+    getFoodInRange() {
+
+      let inRange = []
+
+      for(let i = 0; i<food.length; i++) {
+        if(p5.Vector.dist(this.l,food[i].l) <= this.foodSightRange)
+          inRange.push(food[i])
+      }
+      return inRange
+    }
+    
 
     withinBoundries(x,y) {
       return x > 100 && x < 700 && y > 100 && y < 700
@@ -171,5 +212,9 @@ class Ant {
       if(this.l.y > 700) {
         this.l.y = 700
       }
+    }
+
+    startCounting() {
+      this.startTime = new Date()
     }
 }

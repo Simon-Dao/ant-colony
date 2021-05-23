@@ -1,12 +1,15 @@
 let ants = []
 let food = []
 let NUM_OF_ANTS = 50
+let nest 
 let pos
 
 function setup() {
   createCanvas(800, 800);
   background(0)
   frameRate(60)
+
+  nest = new Nest(400,400)
 
   for(let i = 0; i<NUM_OF_ANTS; i++) {
     ants.push(new Ant(400,400))
@@ -24,6 +27,8 @@ function draw() {
   food.forEach(f => {f.update()})
 
   food = food.filter(f => f.value > 0)
+
+  nest.update()
 }
 
 function mouseClicked() {

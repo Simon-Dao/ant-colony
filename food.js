@@ -16,13 +16,5 @@ class Food {
     }
 
     getEaten() {
-        for(let i = 0; i<ants.length; i++) {
-            let dist = p5.Vector.dist(ants[i].l,this.l)
-
-            if(dist <= this.value) {
-                this.value = this.value > .5 ? this.value - .3 : 0 
-            }
-
-        }
     }
 }
