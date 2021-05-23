@@ -1,6 +1,8 @@
 let SEARCHING = 1
 let EATING = 2
 let RETURNING = 3
+let STOMACH_SIZE = .01
+let FOOD_SIGHT_RANGE = 150
 
 class Ant {
 
@@ -12,12 +14,8 @@ class Ant {
         this.h = 40
         this.speed = 1
         this.v = createVector(0,0)
-        this.foodRange = 100
-        this.foodCarry = 0.5
-        this.foodSightRange = 150
         this.movementMode = SEARCHING
         this.closest = null
-        this.foodInStomach = 0
         this.startTime = 0
         this.endTime = 0
         this.timerSet = 0
@@ -85,6 +83,7 @@ class Ant {
       if(this.elapsedSeconds() >= 6) {
         this.movementMode = SEARCHING
         this.timerSet = false
+        nest.grow()
       } else {
         let newVector = p5.Vector.sub(createVector(nest.x,nest.y),this.l)
         newVector.limit(2)
@@ -187,7 +186,7 @@ class Ant {
       let inRange = []
 
       for(let i = 0; i<food.length; i++) {
-        if(p5.Vector.dist(this.l,food[i].l) <= this.foodSightRange)
+        if(p5.Vector.dist(this.l,food[i].l) <= FOOD_SIGHT_RANGE)
           inRange.push(food[i])
       }
       return inRange

@@ -12,9 +12,17 @@ class Food {
     update() {
         this.l = createVector(this.x,this.y)
         this.getEaten()
+        fill(0,255,0)
         ellipse(this.x, this.y, this.value/2,this.value/2)
     }
 
     getEaten() {
+        for(let i = 0; i<ants.length; i++) {
+            let dist = p5.Vector.dist(ants[i].l,this.l)
+
+            if(dist <= this.value) {
+                this.value = this.value > .5 ? this.value - STOMACH_SIZE : 0 
+            }
+        }
     }
 }

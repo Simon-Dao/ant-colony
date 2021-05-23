@@ -9,7 +9,7 @@ function setup() {
   background(0)
   frameRate(60)
 
-  nest = new Nest(400,400)
+  nest = new Nest(400,400, 20)
 
   for(let i = 0; i<NUM_OF_ANTS; i++) {
     ants.push(new Ant(400,400))
@@ -32,8 +32,8 @@ function draw() {
 }
 
 function mouseClicked() {
-  if(food.length <= 5)
-  food.push(new Food(mouseX,mouseY, Math.floor(random(20,50))))
+  if(food.length <= 15)
+  food.push(new Food(mouseX,mouseY, Math.floor(random(50,100))))
 }
 
 function random(min, max) {
